@@ -1,0 +1,27 @@
+# Terraform state and provider cache
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Variable files may contain secrets (never commit)
+*.tfvars
+!*.tfvars.example
+
+# Terraform crash logs
+crash.log
+crash.*.log
+
+# Local CLI plan files
+*.tfplan
+tfplan
+override.tf
+override_*.tf
+*_override.tf
+*_override.tf.json
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
