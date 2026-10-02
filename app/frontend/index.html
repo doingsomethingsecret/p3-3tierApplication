@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>3-Tier ECS Demo</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 16px; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+    input { padding: 8px; width: 65%; }
+    button { padding: 8px 14px; cursor: pointer; }
+    li { margin: 4px 0; }
+    code { background: #f3f3f3; padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>3-Tier App on AWS ECS</h1>
+
+  <div class="card">
+    <b>Backend info</b>
+    <p id="info">loading...</p>
+    <p id="db">loading...</p>
+  </div>
+
+  <div class="card">
+    <b>Items (saved in RDS PostgreSQL)</b><br /><br />
+    <input id="name" placeholder="item name" />
+    <button onclick="addItem()">Add</button>
+    <ul id="list"></ul>
+  </div>
+
+<script>
+async function load() {
+  try {
+    const i = await (await fetch('/api/info')).json();
+    document.getElementById('info').innerHTML =
+      'Served by backend container: <code>' + i.hostname + '</code>';
+    const d = await (await fetch('/api/db-check')).json();
+    document.getElementById('db').textContent = 'Database: ' + d.db;
+    const items = await (await fetch('/api/items')).json();
+    document.getElementById('list').innerHTML =
+      items.map(x => '<li>' + escapeHtml(x.name) + '</li>').join('');
+  } catch (e) {
+    document.getElementById('info').textContent = 'Backend unreachable';
+  }
+}
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+async function addItem() {
+  const el = document.getElementById('name');
+  if (!el.value.trim()) return;
+  await fetch('/api/items', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: el.value })
+  });
+  el.value = '';
+  load();
+}
+load();
+</script>
+</body>
+</html>
