@@ -1,0 +1,13 @@
+# Copy this file to terraform.tfvars and fill in your own values:
+#   cp terraform.tfvars.example terraform.tfvars
+
+aws_region = "us-east-1"
+
+# Email address for CloudWatch alarm notifications via SNS.
+# Leave empty to create alarms without email notifications.
+# Note: the subscription must be confirmed via email before it works.
+alert_email = ""
+
+# Docker image tag deployed to ECS. Use "latest" locally, or a
+# commit SHA / version tag when deploying from CI.
+image_tag = "latest"
